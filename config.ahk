@@ -17,6 +17,7 @@ BotConfig.Timeouts := { Battle: 30, Attack: 100, Result: 60, Raid: 50 }
 BotConfig.SummonScrollMax := 5
 BotConfig.Window := { Width: 1000, Height: 1799 }
 BotConfig.QuestURL := "" ; Loaded dynamically
+BotConfig.ReplicardURL := "" ; Loaded dynamically
 
 ; -------------------- Bot State (Runtime) --------------------
 global BotState := {}
@@ -48,6 +49,7 @@ global searchQuest := "quest/index"
 global searchCoop := "coop"
 global searchCoopJoin := "coop/offer"
 global searchCoopRoom := "coop/room"
+global searchReplicard := "replicard/supporter"
 
 global RAID_ASSIST_URL := "https://game.granbluefantasy.jp/#quest/assist"
 
@@ -78,7 +80,8 @@ ImageConfig.Battle := { Attack: "attack_button.png"
     , SaluteBtn: "salute_button.png"
     , Rejoin: "rejoin_button.png"
     , OkEnded: "ok_ended_button.png"
-    , OkBattleEnded: "ok_battle_ended_button.png" }
+    , OkBattleEnded: "ok_battle_ended_button.png"
+    , OkPartyReplicard: "ok_party_replicard.png" }
 
 ImageConfig.Summon := { Main: "summon.png"
     , Secondary: "summon_2.png"
@@ -227,18 +230,22 @@ LoadSettings() {
     global BotConfig
     file := BotConfig.SettingsFile
     IniRead, savedURL, %file%, Settings, QuestURL, %A_Space%
-    if (savedURL != "" and savedURL != "ERROR") {
+    IniRead, savedRepli, %file%, Settings, ReplicardURL, %A_Space%
+
+    if (savedURL != "" and savedURL != "ERROR")
         BotConfig.QuestURL := savedURL
-        return true
-    }
-    return false
+
+    if (savedRepli != "" and savedRepli != "ERROR")
+        BotConfig.ReplicardURL := savedRepli
+
+    return true
 }
 
 SaveSettings() {
     global BotConfig
     file := BotConfig.SettingsFile
-    url := BotConfig.QuestURL
-    IniWrite, %url%, %file%, Settings, QuestURL
+    IniWrite, % BotConfig.QuestURL, %file%, Settings, QuestURL
+    IniWrite, % BotConfig.ReplicardURL, %file%, Settings, ReplicardURL
     return true
 }
 
@@ -265,6 +272,8 @@ ReturnToBase() {
 
     if (BotState.BotMode = "Raid") {
         GoToQuest(RAID_ASSIST_URL)
+    } else if (BotState.BotMode = "Replicard") {
+        GoToQuest(BotConfig.ReplicardURL)
     } else {
         GoToQuest(BotConfig.QuestURL)
     }

@@ -291,3 +291,48 @@ HandleRaid() {
         return
     }
 }
+
+HandleReplicard() {
+    global BotConfig, ImageConfig, BotState
+    Sleep, 300
+    region := BotConfig.Regions.Game
+
+    ; Increment Raid timer
+    BotState.Timers.Sub++
+
+    ; Check Timeout (5 seconds default)
+    if (BotState.Timers.Sub >= BotConfig.Timeouts.Raid) {
+        Log("Raid not found - refreshing page")
+        RefreshPage()
+        BotState.Timers.Sub := 0
+        return
+    }
+
+    if ImageSearch(x, y, ImageConfig.Battle.OkPartyReplicard, region) {
+        RandomClick(x, y)
+        Sleep, 500
+        BotState.Timers.Sub := 0
+        return
+    }
+
+    if ImageSearch(x, y, ImageConfig.Battle.Ok, region) {
+        RandomClick(x, y)
+        Sleep, 500
+        BotState.Timers.Sub := 0
+        return
+    }
+
+    if ImageSearch(x, y, ImageConfig.Battle.OkGeneric, region) {
+        RandomClick(x, y)
+        Sleep, 500
+        BotState.Timers.Sub := 0
+        return
+    }
+
+    if ImageSearch(x, y, ImageConfig.Battle.Raid, region) {
+        RandomClick(x, y)
+        Sleep, 500
+        BotState.Timers.Sub := 0
+        return
+    }
+}

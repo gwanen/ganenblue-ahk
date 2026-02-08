@@ -32,7 +32,8 @@ Gui, Add, Button, x25 y125 w170 h32 gBtnReload, Reload Script
 
 ; === Settings Column (Right) ===
 Gui, Add, GroupBox, x220 y10 w220 h175 cBlack, Configuration
-Gui, Add, Button, x235 y45 w190 h32 gBtnEditQuest, Edit Quest URL
+Gui, Add, Button, x235 y45 w90 h32 gBtnEditQuest, Quest URL
+Gui, Add, Button, x330 y45 w90 h32 gBtnEditReplicard, Repli. URL
 Gui, Add, Button, x235 y85 w190 h32 gBtnResize, Resize Window
 
 Gui, Font, s8
@@ -40,9 +41,10 @@ Gui, Add, Text, x235 y125 w60 h20, Battle:
 Gui, Add, Radio, x280 y125 w70 h20 vRadioFullAuto gToggleBattleMode Checked, Full Auto
 Gui, Add, Radio, x355 y125 w70 h20 vRadioSemiAuto gToggleBattleMode, Semi Auto
 
-Gui, Add, Text, x235 y145 w60 h20, Mode:
-Gui, Add, Radio, x280 y145 w70 h20 vRadioQuestMode gToggleBotMode Checked, Quest
-Gui, Add, Radio, x355 y145 w70 h20 vRadioRaidMode gToggleBotMode, Raid
+Gui, Add, Text, x235 y145 w40 h20, Mode:
+Gui, Add, Radio, x275 y145 w55 h20 vRadioQuestMode gToggleBotMode Checked, Quest
+Gui, Add, Radio, x330 y145 w45 h20 vRadioRaidMode gToggleBotMode, Raid
+Gui, Add, Radio, x375 y145 w65 h20 vRadioReplicardMode gToggleBotMode, Replicard
 
 ; === Activity Log ===
 Gui, Font, s9 cBlack
@@ -57,21 +59,25 @@ Gui, Font, s9
 Gui, Add, Checkbox, x25 y572 w100 h20 vAlwaysOnTopCheck gToggleAlwaysOnTop Checked, Always On Top
 Gui, Add, Checkbox, x135 y572 w100 h20 vDebugModeCheck gToggleDebugMode, Debug Mode
 
-; === Quest Info ===
+; === Quest & Replicard Info ===
 Gui, Font, s8 c606060
-Gui, Add, Text, x10 y595 w430 h20 vQuestInfo Center cGray, Quest: Not configured
+Gui, Add, Text, x10 y590 w430 h15 vQuestInfo Center cGray, Quest: Not configured
+Gui, Add, Text, x10 y605 w430 h15 vRepliInfo Center cGray, Repli: Not configured
 
-Gui, Show, w450 h620, Ganenblue AHK v3.1
+Gui, Show, w450 h630, Ganenblue AHK v3.1
 
 ; Set ListView colors
 Gui, ListView, Logbox
 
 ; Initial GUI Update
-if (BotConfig.QuestURL != "") {
+if (BotConfig.QuestURL != "")
     GuiControl,, QuestInfo, % "Quest: " . BotConfig.QuestURL
-} else {
-    Log("No quest URL configured - click 'Edit Quest URL'")
-}
+
+if (BotConfig.ReplicardURL != "")
+    GuiControl,, RepliInfo, % "Repli: " . BotConfig.ReplicardURL
+
+if (BotConfig.QuestURL = "" and BotConfig.ReplicardURL = "")
+    Log("No URLs configured - click 'Quest URL' or 'Repli. URL'")
 
 Log("Bot Ready - Click START to begin")
 
@@ -86,9 +92,15 @@ Return
 MainLoop:
     global lastCheckedURL
 
-    if (!BotState.IsRunning or BotState.IsPaused or BotConfig.QuestURL = "") {
+    ; Basic Guard
+    if (!BotState.IsRunning or BotState.IsPaused)
         return
-    }
+
+    ; Mode-specific Guard (ensure URL is set for Quest/Replicard)
+    if (BotState.BotMode = "Quest" and BotConfig.QuestURL = "")
+        return
+    if (BotState.BotMode = "Replicard" and BotConfig.ReplicardURL = "")
+        return
 
     ; Throttle URL Check (Every 5 ticks = 500ms)
     ; Throttle URL Check (Every 5 ticks = 500ms)
@@ -128,6 +140,9 @@ MainLoop:
     else if InStr(url, searchSelectSummonRaid) or InStr(url, searchSelectSummon) {
         HandleSummon()
     }
+    else if InStr(url, searchReplicard) {
+        HandleReplicard()
+    }
     else if InStr(url, searchScene) {
         HandleStory()
     }
@@ -160,9 +175,15 @@ UpdateGUI:
 Return
 
 BtnStart:
-    if (BotConfig.QuestURL = "") {
+    ; Validate configuration based on mode
+    if (BotState.BotMode = "Quest" and BotConfig.QuestURL = "") {
         MsgBox, 48, No Quest URL, Please configure a quest URL first!
         Gosub, ShowQuestURLSetup
+        Return
+    }
+    if (BotState.BotMode = "Replicard" and BotConfig.ReplicardURL = "") {
+        MsgBox, 48, No Replicard URL, Please configure a Replicard URL first!
+        Gosub, ShowRepliURLSetup
         Return
     }
 
@@ -229,6 +250,10 @@ BtnEditQuest:
     Gosub, ShowQuestURLSetup
 Return
 
+BtnEditReplicard:
+    Gosub, ShowRepliURLSetup
+Return
+
 ToggleBattleMode:
     Gui, Submit, NoHide
     if (RadioSemiAuto) {
@@ -245,6 +270,9 @@ ToggleBotMode:
     if (RadioRaidMode) {
         BotState.BotMode := "Raid"
         Log("Bot mode: RAID MODE (returns to assist page)")
+    } else if (RadioReplicardMode) {
+        BotState.BotMode := "Replicard"
+        Log("Bot mode: REPLICARD MODE")
     } else {
         BotState.BotMode := "Quest"
         Log("Bot mode: QUEST MODE (returns to quest URL)")
@@ -290,9 +318,11 @@ GuiSize:
 
     GuiControl, Move, Logbox, w%newWidth% h%newHeight%
 
-    ; Move quest info and checkboxes to bottom
-    questY := A_GuiHeight - 25
-    optY := A_GuiHeight - 48
+    ; Move info and checkboxes to bottom
+    repliY := A_GuiHeight - 20
+    questY := A_GuiHeight - 35
+    optY := A_GuiHeight - 58
+    GuiControl, Move, RepliInfo, w%newWidth% y%repliY%
     GuiControl, Move, QuestInfo, w%newWidth% y%questY%
     GuiControl, Move, AlwaysOnTopCheck, y%optY%
     GuiControl, Move, DebugModeCheck, y%optY%
@@ -358,7 +388,69 @@ CancelQuestURL:
 
     Gui, 2:Destroy
     Gui, 1:-Disabled
-    WinActivate, Ganenblue AHK v3.0
+    WinActivate, Ganenblue AHK v3.1
+Return
+
+; === Replicard URL Setup Dialog ===
+ShowRepliURLSetup:
+    Gui, 1:+Disabled
+
+    Gui, 3:New, +Owner1 +ToolWindow
+    Gui, 3:Color, White
+    Gui, 3:Font, s10 cBlack, Segoe UI
+
+    Gui, 3:Add, GroupBox, x10 y10 w460 h130 cBlack, Replicard URL Configuration
+
+    Gui, 3:Font, s9 cBlack
+    Gui, 3:Add, Text, x20 y30 w440 h40 cBlack, Enter your Replicard supporter selection URL:`n(Example: https://game.granbluefantasy.jp/#replicard/supporter/12345/1)
+
+    currentRepli := BotConfig.ReplicardURL
+    Gui, 3:Add, Edit, x20 y75 w440 h25 vRepliURLInput cBlack, %currentRepli%
+
+    Gui, 3:Add, Button, x20 y110 w100 h30 gSaveRepliURL Default, Save
+    Gui, 3:Add, Button, x130 y110 w100 h30 gCancelRepliURL, Cancel
+
+    Gui, 3:Add, Text, x20 y150 w440 h60 cGray, Tips:`n- The URL must start with https://game.granbluefantasy.jp/`n- This should be the page where you select a support summon for Replicard.
+
+    Gui, 3:Show, w480 h220, Replicard URL Setup
+Return
+
+SaveRepliURL:
+    Gui, 3:Submit, NoHide
+
+    if (RepliURLInput = "") {
+        MsgBox, 16, Error, Replicard URL cannot be empty!
+        Return
+    }
+
+    if (!InStr(RepliURLInput, "game.granbluefantasy.jp")) {
+        MsgBox, 16, Error, Invalid Replicard URL!`n`nURL must contain: game.granbluefantasy.jp
+        Return
+    }
+
+    BotConfig.ReplicardURL := RepliURLInput
+    SaveSettings()
+
+    GuiControl, 1:, RepliInfo, % "Repli: " . BotConfig.ReplicardURL
+    Log("Replicard URL updated: " . BotConfig.ReplicardURL)
+
+    Gui, 3:Destroy
+    Gui, 1:-Disabled
+    WinActivate, Ganenblue AHK v3.1
+Return
+
+CancelRepliURL:
+    if (BotConfig.ReplicardURL = "") {
+        MsgBox, 48, Warning, No Replicard URL configured!
+    }
+
+    Gui, 3:Destroy
+    Gui, 1:-Disabled
+    WinActivate, Ganenblue AHK v3.1
+Return
+
+3GuiClose:
+    Gosub, CancelRepliURL
 Return
 
 2GuiClose:
