@@ -1,4 +1,4 @@
-# GBF Bot v3.0
+# Ganenblue AHK v3.0
 
 A performant and flexible automation bot for **Granblue Fantasy** (browser version), written in **AutoHotkey v1**.
 
@@ -20,7 +20,7 @@ This bot automates repetitive farming tasks like raids, story events, and guild 
 
 ## 📂 Project Structure
 
-*   `GW.ahk`: **Main Script**. Launch this file. Handles the GUI and main loop.
+*   `ganenblue.ahk`: **Main Script**. Launch this file. Handles the GUI and main loop.
 *   `config.ahk`: Configuration, constants, image paths, and state management (`BotConfig`, `BotState`).
 *   `actions.ahk`: Game logic handlers (Battle, Results, Summon selection, etc.).
 *   `image/`: Directory containing required PNG assets for image recognition.
@@ -37,7 +37,7 @@ This bot automates repetitive farming tasks like raids, story events, and guild 
 
 1.  **Download/Clone** this repository.
 2.  Ensure your `image/` folder is populated with the necessary game assets (buttons, headers, etc.).
-3.  Run **`GW.ahk`** as Administrator (recommended for input simulation).
+3.  Run **`ganenblue.ahk`** as Administrator (recommended for input simulation).
 
 ### Configuration
 1.  **Set Quest URL**:

@@ -1,5 +1,5 @@
 ; ============================================
-; GBF Bot - Configuration & Utilities (OPTIMIZED v3.1)
+; Ganenblue AHK - Configuration & Utilities (OPTIMIZED v3.1)
 ; ============================================
 
 ; -------------------- Performance --------------------
@@ -23,7 +23,8 @@ BotConfig.QuestURL := "" ; Loaded dynamically
 global BotState := {}
 BotState.IsRunning := false
 BotState.IsPaused := true
-BotState.IsAlwaysOnTop := false
+BotState.IsAlwaysOnTop := true ; Default as requested
+BotState.DebugMode := false
 BotState.BattleMode := "FullAuto" ; or "SemiAuto"
 BotState.BotMode := "Quest" ; or "Raid"
 BotState.BattleCount := 0
@@ -48,6 +49,15 @@ global searchCoopJoin := "coop/offer"
 global searchCoopRoom := "coop/room"
 
 global RAID_ASSIST_URL := "https://game.granbluefantasy.jp/#quest/assist"
+
+; Click Variance (Randomization)
+global clickVariance := 5
+
+; Story Skip Coordinates (Relative to Game Area)
+global story_skip_X := 860
+global story_skip_Y := 50
+global story_skip_ok_X := 500
+global story_skip_ok_Y := 600
 
 ; -------------------- Image Resources --------------------
 global ImageConfig := {}
@@ -142,6 +152,9 @@ ImageSearch(byref coordX, byref coordY, imageName, region := "") {
         coordY := foundY + (h // 2)
         return true
     }
+
+    ; Debug logging for failed search (Requested by user)
+    ; Log("Debug: Image not found - " . imageName)
     return false
 }
 

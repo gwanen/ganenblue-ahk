@@ -1,5 +1,5 @@
 ; ============================================
-; GBF Bot - Main Script with Modern GUI v3.0
+; Ganenblue AHK - Main Script with Modern GUI v3.0
 ; ============================================
 
 #NoEnv
@@ -80,7 +80,7 @@ LV_ModifyCol(2, 280)
 Gui, Font, s8 c606060
 Gui, Add, Text, x10 y570 w380 h40 vQuestInfo Center cGray, Quest: Not configured
 
-Gui, Show, w400 h620, GBF Bot v3.0
+Gui, Show, w400 h620, Ganenblue AHK v3.0
 
 ; Set ListView colors
 Gui, ListView, Logbox
@@ -115,6 +115,14 @@ MainLoop:
     if (Mod(BotState.LoopCount, 5) = 0 or BotState.LastURL = "") {
         url := GetChromeURL()
         BotState.LastURL := url
+
+        ; DEBUG: Log URL every 5 seconds (50 ticks) to verify detection
+        if (Mod(BotState.LoopCount, 50) = 0) {
+            if (url != "")
+                Log("DEBUG: Current URL: " . SubStr(url, 1, 50) . "...")
+            else
+                Log("DEBUG: No URL detected")
+        }
     } else {
         url := BotState.LastURL
     }
@@ -355,7 +363,7 @@ SaveQuestURL:
 
     Gui, 2:Destroy
     Gui, 1:-Disabled
-    WinActivate, GBF Bot v3.0
+    WinActivate, Ganenblue AHK v3.0
 Return
 
 CancelQuestURL:
@@ -365,7 +373,7 @@ CancelQuestURL:
 
     Gui, 2:Destroy
     Gui, 1:-Disabled
-    WinActivate, GBF Bot v3.0
+    WinActivate, Ganenblue AHK v3.0
 Return
 
 2GuiClose:
