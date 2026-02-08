@@ -19,68 +19,49 @@ if (!LoadSettings() or BotConfig.QuestURL = "") {
 }
 
 ; -------------------- Create GUI --------------------
-Gui, +Resize +MinSize400x300
+Gui, +Resize +MinSize450x400 +AlwaysOnTop
 Gui, Color, White
 Gui, Font, s9 cBlack, Segoe UI
 
-; === Control Panel ===
-Gui, Add, GroupBox, x10 y10 w380 h180 cBlack, Control Panel
+; === Controls Column (Left) ===
+Gui, Add, GroupBox, x10 y10 w200 h175 cBlack, Commands
+Gui, Add, Button, x25 y45 w170 h32 gBtnStart vBtnStartCtrl, Start
+Gui, Add, Button, x25 y85 w80 h32 gBtnPause vBtnPauseCtrl Disabled, Pause
+Gui, Add, Button, x115 y85 w80 h32 gBtnStop vBtnStopCtrl Disabled, Stop
+Gui, Add, Button, x25 y125 w170 h32 gBtnReload, Reload Script
 
-; Buttons Row 1 - Start/Stop/Pause
-Gui, Add, Button, x20 y30 w80 h35 gBtnStart vBtnStartCtrl, Start
-Gui, Add, Button, x110 y30 w80 h35 gBtnPause vBtnPauseCtrl Disabled, Pause
-Gui, Add, Button, x200 y30 w80 h35 gBtnStop vBtnStopCtrl Disabled, Stop
+; === Settings Column (Right) ===
+Gui, Add, GroupBox, x220 y10 w220 h175 cBlack, Configuration
+Gui, Add, Button, x235 y45 w190 h32 gBtnEditQuest, Edit Quest URL
+Gui, Add, Button, x235 y85 w190 h32 gBtnResize, Resize Window
 
-; Buttons Row 2 - Utilities
-Gui, Add, Button, x20 y75 w80 h30 gBtnReload, Reload
-Gui, Add, Button, x110 y75 w80 h30 gBtnResize, Resize Win
-Gui, Add, Button, x200 y75 w170 h30 gBtnEditQuest, Edit Quest URL
+Gui, Font, s8
+Gui, Add, Text, x235 y125 w60 h20, Battle:
+Gui, Add, Radio, x280 y125 w70 h20 vRadioFullAuto gToggleBattleMode Checked, Full Auto
+Gui, Add, Radio, x355 y125 w70 h20 vRadioSemiAuto gToggleBattleMode, Semi Auto
 
-; Row 3 - Battle Mode Selection
-Gui, Font, s8 cBlack
-Gui, Add, Text, x20 y115 w80 h20 cBlack, Battle Mode:
-Gui, Add, Radio, x20 y130 w90 h20 vRadioFullAuto gToggleBattleMode Checked, Full Auto
-Gui, Add, Radio, x120 y130 w90 h20 vRadioSemiAuto gToggleBattleMode, Semi Auto
-
-; Row 4 - Bot Mode Selection (Quest/Raid)
-Gui, Font, s8 cBlack
-Gui, Add, Text, x20 y155 w80 h20 cBlack, Bot Mode:
-Gui, Add, Radio, x20 y170 w90 h20 vRadioQuestMode gToggleBotMode Checked, Quest Mode
-Gui, Add, Radio, x120 y170 w90 h20 vRadioRaidMode gToggleBotMode, Raid Mode
-
-; Checkbox
-Gui, Font, s9 cBlack
-Gui, Add, Checkbox, x240 y130 w130 h20 vAlwaysOnTopCheck gToggleAlwaysOnTop cBlack, Always On Top
-
-; === Statistics ===
-Gui, Add, GroupBox, x10 y200 w380 h100 cBlack, Statistics
-
-Gui, Font, s8 cBlack
-Gui, Add, Text, x20 y220 w170 h20 cBlack, Battles Completed:
-Gui, Add, Text, x200 y220 w170 h20 vStatBattles Right cBlack, 0
-
-Gui, Add, Text, x20 y240 w170 h20 cBlack, Errors:
-Gui, Add, Text, x200 y240 w170 h20 vStatErrors Right cBlack, 0
-
-Gui, Add, Text, x20 y260 w170 h20 cBlack, Status:
-Gui, Add, Text, x200 y260 w170 h20 vStatStatus Right cRed, STOPPED
-
-Gui, Add, Button, x20 y275 w80 h20 gBtnResetStats, Reset Stats
+Gui, Add, Text, x235 y145 w60 h20, Mode:
+Gui, Add, Radio, x280 y145 w70 h20 vRadioQuestMode gToggleBotMode Checked, Quest
+Gui, Add, Radio, x355 y145 w70 h20 vRadioRaidMode gToggleBotMode, Raid
 
 ; === Activity Log ===
 Gui, Font, s9 cBlack
-Gui, Add, GroupBox, x10 y310 w380 h250 cBlack, Activity Log
-
+Gui, Add, GroupBox, x10 y200 w430 h360 cBlack, Activity Log
 Gui, Font, s8
-Gui, Add, ListView, x20 y330 w360 h220 vLogbox -Hdr Grid Background0xF0F0F0 cBlack, Time|Activity
+Gui, Add, ListView, x20 y225 w410 h325 vLogbox -Hdr Grid Background0xF0F0F0 cBlack, Time|Activity
 LV_ModifyCol(1, 70)
-LV_ModifyCol(2, 280)
+LV_ModifyCol(2, 310)
+
+; === Options (Bottom Row) ===
+Gui, Font, s9
+Gui, Add, Checkbox, x25 y572 w100 h20 vAlwaysOnTopCheck gToggleAlwaysOnTop Checked, Always On Top
+Gui, Add, Checkbox, x135 y572 w100 h20 vDebugModeCheck gToggleDebugMode, Debug Mode
 
 ; === Quest Info ===
 Gui, Font, s8 c606060
-Gui, Add, Text, x10 y570 w380 h40 vQuestInfo Center cGray, Quest: Not configured
+Gui, Add, Text, x10 y595 w430 h20 vQuestInfo Center cGray, Quest: Not configured
 
-Gui, Show, w400 h620, Ganenblue AHK v3.0
+Gui, Show, w450 h620, Ganenblue AHK v3.1
 
 ; Set ListView colors
 Gui, ListView, Logbox
@@ -92,7 +73,7 @@ if (BotConfig.QuestURL != "") {
     Log("No quest URL configured - click 'Edit Quest URL'")
 }
 
-Log("=== Bot Ready - Click START to begin ===")
+Log("Bot Ready - Click START to begin")
 
 ; Start main loop timer
 SetTimer, MainLoop, 100
@@ -110,8 +91,10 @@ MainLoop:
     }
 
     ; Throttle URL Check (Every 5 ticks = 500ms)
+    ; Throttle URL Check (Every 5 ticks = 500ms)
     ; This significantly reduces CPU usage from Accessibility calls
     BotState.LoopCount++
+
     if (Mod(BotState.LoopCount, 5) = 0 or BotState.LastURL = "") {
         url := GetChromeURL()
         BotState.LastURL := url
@@ -173,19 +156,7 @@ Return
 ; ============================================
 
 UpdateGUI:
-    GuiControl,, StatBattles, % BotState.BattleCount
-    GuiControl,, StatErrors, % BotState.ErrorCount
-
-    if (!BotState.IsRunning) {
-        GuiControl, +cRed, StatStatus
-        GuiControl,, StatStatus, STOPPED
-    } else if (BotState.IsPaused) {
-        GuiControl, +cFF8C00, StatStatus
-        GuiControl,, StatStatus, PAUSED
-    } else {
-        GuiControl, +c008000, StatStatus
-        GuiControl,, StatStatus, RUNNING
-    }
+; Statistics updates removed
 Return
 
 BtnStart:
@@ -198,12 +169,14 @@ BtnStart:
     BotState.IsRunning := true
     BotState.IsPaused := false
 
+    Gui, Submit, NoHide
+
     GuiControl, Disable, BtnStartCtrl
     GuiControl, Enable, BtnPauseCtrl
     GuiControl, Enable, BtnStopCtrl
-    GuiControl,, BtnPauseCtrl, ⏸ Pause
+    GuiControl,, BtnPauseCtrl, Pause
 
-    Log("=== BOT STARTED ===")
+    Log("Bot started")
     Log("Battle Mode: " . BotState.BattleMode)
     Log("Bot Mode: " . BotState.BotMode)
     Log("Target: " . (BotState.BotMode = "Raid" ? RAID_ASSIST_URL : BotConfig.QuestURL))
@@ -214,10 +187,10 @@ BtnPause:
     BotState.IsPaused := !BotState.IsPaused
     if (BotState.IsPaused) {
         GuiControl,, BtnPauseCtrl, Resume
-        Log("=== PAUSED ===")
+        Log("Paused")
     } else {
         GuiControl,, BtnPauseCtrl, Pause
-        Log("=== RESUMED ===")
+        Log("Resumed")
     }
     Gosub, UpdateGUI
 Return
@@ -231,7 +204,10 @@ BtnStop:
     GuiControl, Disable, BtnStopCtrl
     GuiControl,, BtnPauseCtrl, Pause
 
-    Log("=== BOT STOPPED ===")
+    ; Unlock Configuration
+    ; GuiControl, Enable, NoTimeoutCheck
+
+    Log("Bot stopped")
     Log("Total battles: " . BotState.BattleCount . " | Errors: " . BotState.ErrorCount)
     ResetBattleState()
     Gosub, UpdateGUI
@@ -247,13 +223,7 @@ BtnResize:
     ResizeWindow()
 Return
 
-BtnResetStats:
-    BotState.BattleCount := 0
-    BotState.ErrorCount := 0
-    ResetBattleState()
-    Log("Statistics reset")
-    Gosub, UpdateGUI
-Return
+; BtnResetStats removed
 
 BtnEditQuest:
     Gosub, ShowQuestURLSetup
@@ -294,22 +264,38 @@ ToggleAlwaysOnTop:
     }
 Return
 
+ToggleDebugMode:
+    Gui, Submit, NoHide
+    BotState.DebugMode := DebugModeCheck
+
+    if (BotState.DebugMode) {
+        Log("Debug Mode: ENABLED (Verbose logging)")
+    } else {
+        Log("Debug Mode: DISABLED")
+    }
+Return
+
+; ToggleTimeout removed
+
 GuiSize:
     if (A_EventInfo = 1)  ; Minimized
         return
 
     ; Resize log to fit window
     newWidth := A_GuiWidth - 40
-    newHeight := A_GuiHeight - 360
+    newHeight := A_GuiHeight - 295 ; Adjusted for new layout (y225 start)
 
     if (newHeight < 100)
         newHeight := 100
 
     GuiControl, Move, Logbox, w%newWidth% h%newHeight%
 
-    ; Move quest info to bottom
-    questY := A_GuiHeight - 50
+    ; Move quest info and checkboxes to bottom
+    questY := A_GuiHeight - 25
+    optY := A_GuiHeight - 48
     GuiControl, Move, QuestInfo, w%newWidth% y%questY%
+    GuiControl, Move, AlwaysOnTopCheck, y%optY%
+    GuiControl, Move, DebugModeCheck, y%optY%
 Return
 
 ; ============================================
@@ -336,8 +322,7 @@ ShowQuestURLSetup:
     Gui, 2:Add, Button, x20 y110 w100 h30 gSaveQuestURL Default, Save
     Gui, 2:Add, Button, x130 y110 w100 h30 gCancelQuestURL, Cancel
 
-    Gui, 2:Font, s8 c606060
-    Gui, 2:Add, Text, x20 y150 w440 h60 cGray, Tips:`n• The URL must start with https://game.granbluefantasy.jp/`n• You can get this URL from your browser address bar when on the quest page`n• The URL will be saved and loaded automatically on next start
+    Gui, 2:Add, Text, x20 y150 w440 h60 cGray, Tips:`n- The URL must start with https://game.granbluefantasy.jp/`n- You can get this URL from your browser address bar when on the quest page`n- The URL will be saved and loaded automatically on next start
 
     Gui, 2:Show, w480 h220, Quest URL Setup
 Return
@@ -395,18 +380,12 @@ F2::
 Return
 
 F10::
-    MsgBox, % "=== Bot Statistics ===`n"
-        . "Battles Completed: " . BotState.BattleCount . "`n"
-        . "Errors: " . BotState.ErrorCount . "`n"
-        . "Battle Timer: " . BotState.Timers.Main . "/" . BotConfig.Timeouts.Battle . "`n"
-        . "Result Timer: " . BotState.Timers.Result . "/" . BotConfig.Timeouts.Result . "`n`n"
-        . "Mode: " . BotState.BattleMode . "`n"
-        . "Status: " . (BotState.IsRunning ? (BotState.IsPaused ? "PAUSED" : "RUNNING") : "STOPPED")
+    Log("Battle timer: " . BotState.Timers.Main . "/" . BotConfig.Timeouts.Battle)
+    Log("Result timer: " . BotState.Timers.Result . "/" . BotConfig.Timeouts.Result)
+    Log("Status: " . (BotState.IsRunning ? (BotState.IsPaused ? "PAUSED" : "RUNNING") : "STOPPED"))
 Return
 
-F11::
-    Gosub, BtnResetStats
-Return
+; F11 removed (Reset Stats)
 
 F12::
     if (BotState.IsRunning) {

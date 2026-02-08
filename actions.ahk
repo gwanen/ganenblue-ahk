@@ -26,7 +26,7 @@ HandleBattle() {
 
     ; Check for salute button (party wiped)
     if (ImageSearch(x, y, ImageConfig.Battle.SaluteBtn, region)) {
-        Log(">>> PARTY WIPED DETECTED <<<")
+        Log("Party wiped detected")
 
         if (BotState.BotMode = "Raid") {
             Log("RAID MODE: Party wiped - returning to assist page")
@@ -66,6 +66,14 @@ HandleBattle() {
                 BotState.ErrorCount++
             }
         }
+        return
+    }
+
+    if (ImageSearch(x, y, ImageConfig.Battle.OkBattleEnded, region)) {
+        Log("Battle ended - clicking OK")
+        RandomClick(x, y)
+        Sleep, 500
+        BotState.Timers.Sub := 0
         return
     }
 
@@ -240,31 +248,46 @@ HandleSummon() {
 }
 
 HandleRaid() {
-    global BotConfig, ImageConfig
+    global BotConfig, ImageConfig, BotState
     Sleep, 300
     region := BotConfig.Regions.Game
+
+    ; Increment Raid timer
+    BotState.Timers.Sub++
+
+    ; Check Timeout (5 seconds default)
+    if (BotState.Timers.Sub >= BotConfig.Timeouts.Raid) {
+        Log("Raid not found - refreshing page")
+        RefreshPage()
+        BotState.Timers.Sub := 0
+        return
+    }
 
     if ImageSearch(x, y, ImageConfig.Battle.OkPending, region) {
         RandomClick(x, y)
         Sleep, 500
+        BotState.Timers.Sub := 0
         return
     }
 
     if ImageSearch(x, y, ImageConfig.Battle.Ok, region) {
         RandomClick(x, y)
         Sleep, 500
+        BotState.Timers.Sub := 0
         return
     }
 
     if ImageSearch(x, y, ImageConfig.Battle.OkGeneric, region) {
         RandomClick(x, y)
         Sleep, 500
+        BotState.Timers.Sub := 0
         return
     }
 
     if ImageSearch(x, y, ImageConfig.Battle.Raid, region) {
         RandomClick(x, y)
         Sleep, 500
+        BotState.Timers.Sub := 0
         return
     }
 }

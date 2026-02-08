@@ -12,9 +12,8 @@ Process, Priority,, High
 ; -------------------- Bot Configuration --------------------
 global BotConfig := {}
 BotConfig.SettingsFile := "bot_settings.ini"
-BotConfig.AutoExitMinutes := 80
 BotConfig.MainLoopDelay := 100
-BotConfig.Timeouts := { Battle: 30, Attack: 100, Result: 60 }
+BotConfig.Timeouts := { Battle: 30, Attack: 100, Result: 60, Raid: 50 }
 BotConfig.SummonScrollMax := 5
 BotConfig.Window := { Width: 1000, Height: 1799 }
 BotConfig.QuestURL := "" ; Loaded dynamically
@@ -32,6 +31,8 @@ BotState.ErrorCount := 0
 BotState.Timers := { Main: 0, Sub: 0, Result: 0 }
 BotState.LastURL := ""
 BotState.LoopCount := 0
+BotState.StartTime := 0
+; BotState.RunLimitMinutes / NoTimeout removed
 
 ; -------------------- Constants --------------------
 global ChromeBrowsers := "Chrome_WidgetWin_1"
@@ -76,7 +77,8 @@ ImageConfig.Battle := { Attack: "attack_button.png"
     , Raid: "raid_button.png"
     , SaluteBtn: "salute_button.png"
     , Rejoin: "rejoin_button.png"
-    , OkEnded: "ok_ended_button.png" }
+    , OkEnded: "ok_ended_button.png"
+    , OkBattleEnded: "ok_battle_ended_button.png" }
 
 ImageConfig.Summon := { Main: "summon.png"
     , Secondary: "summon_2.png"
