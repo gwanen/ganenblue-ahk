@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # Binaries
 *.exe
@@ -28,3 +29,25 @@ __pycache__/
 venv/
 .env
 .snapshots
+=======
+
+# Binaries
+*.exe
+*.bin
+*.dll
+
+# Config
+bot_settings.ini
+
+# Logs
+*.log
+*.tmp
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+Desktop.ini
+>>>>>>> b978b8e (feat: Add numerous image assets for bot UI recognition and update the main script, settings, and gitignore.)
