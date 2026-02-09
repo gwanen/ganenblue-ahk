@@ -41,10 +41,10 @@ Gui, Add, Text, x235 y125 w60 h20, Battle:
 Gui, Add, Radio, x280 y125 w70 h20 vRadioFullAuto gToggleBattleMode Checked, Full Auto
 Gui, Add, Radio, x355 y125 w70 h20 vRadioSemiAuto gToggleBattleMode, Semi Auto
 
-Gui, Add, Text, x235 y145 w40 h20, Mode:
-Gui, Add, Radio, x275 y145 w55 h20 vRadioQuestMode gToggleBotMode Checked, Quest
-Gui, Add, Radio, x330 y145 w45 h20 vRadioRaidMode gToggleBotMode, Raid
-Gui, Add, Radio, x375 y145 w65 h20 vRadioReplicardMode gToggleBotMode, Replicard
+Gui, Add, Text, x230 y145 w40 h20, Mode:
+Gui, Add, Radio, x270 y145 w50 h20 vRadioQuestMode gToggleBotMode Checked, Quest
+Gui, Add, Radio, x320 y145 w45 h20 vRadioRaidMode gToggleBotMode, Raid
+Gui, Add, Radio, x365 y145 w70 h20 vRadioReplicardMode gToggleBotMode, Replicard
 
 ; === Activity Log ===
 Gui, Font, s9 cBlack
@@ -61,20 +61,20 @@ Gui, Add, Checkbox, x135 y572 w100 h20 vDebugModeCheck gToggleDebugMode, Debug M
 
 ; === Quest & Replicard Info ===
 Gui, Font, s8 c606060
-Gui, Add, Text, x10 y590 w430 h15 vQuestInfo Center cGray, Quest: Not configured
-Gui, Add, Text, x10 y605 w430 h15 vRepliInfo Center cGray, Repli: Not configured
+Gui, Add, Text, x20 y590 w410 h15 vQuestInfo cGray, Q: Not configured
+Gui, Add, Text, x20 y610 w410 h15 vRepliInfo cGray, R: Not configured
 
-Gui, Show, w450 h630, Ganenblue AHK v3.1
+Gui, Show, w450 h635, Ganenblue AHK v3.1
 
 ; Set ListView colors
 Gui, ListView, Logbox
 
 ; Initial GUI Update
 if (BotConfig.QuestURL != "")
-    GuiControl,, QuestInfo, % "Quest: " . BotConfig.QuestURL
+    GuiControl,, QuestInfo, % "Q: " . BotConfig.QuestURL
 
 if (BotConfig.ReplicardURL != "")
-    GuiControl,, RepliInfo, % "Repli: " . BotConfig.ReplicardURL
+    GuiControl,, RepliInfo, % "R: " . BotConfig.ReplicardURL
 
 if (BotConfig.QuestURL = "" and BotConfig.ReplicardURL = "")
     Log("No URLs configured - click 'Quest URL' or 'Repli. URL'")
@@ -320,8 +320,8 @@ GuiSize:
 
     ; Move info and checkboxes to bottom
     repliY := A_GuiHeight - 20
-    questY := A_GuiHeight - 35
-    optY := A_GuiHeight - 58
+    questY := A_GuiHeight - 40
+    optY := A_GuiHeight - 65
     GuiControl, Move, RepliInfo, w%newWidth% y%repliY%
     GuiControl, Move, QuestInfo, w%newWidth% y%questY%
     GuiControl, Move, AlwaysOnTopCheck, y%optY%
@@ -373,7 +373,7 @@ SaveQuestURL:
     BotConfig.QuestURL := QuestURLInput
     SaveSettings()
 
-    GuiControl, 1:, QuestInfo, % "Quest: " . BotConfig.QuestURL
+    GuiControl, 1:, QuestInfo, % "Q: " . BotConfig.QuestURL
     Log("Quest URL updated: " . BotConfig.QuestURL)
 
     Gui, 2:Destroy
@@ -431,7 +431,7 @@ SaveRepliURL:
     BotConfig.ReplicardURL := RepliURLInput
     SaveSettings()
 
-    GuiControl, 1:, RepliInfo, % "Repli: " . BotConfig.ReplicardURL
+    GuiControl, 1:, RepliInfo, % "R: " . BotConfig.ReplicardURL
     Log("Replicard URL updated: " . BotConfig.ReplicardURL)
 
     Gui, 3:Destroy

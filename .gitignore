@@ -1,2 +1,20 @@
-image
-.bot_settings.ini
+
+# Binaries
+*.exe
+*.bin
+*.dll
+
+# Config
+bot_settings.ini
+
+# Logs
+*.log
+*.tmp
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+Desktop.ini
