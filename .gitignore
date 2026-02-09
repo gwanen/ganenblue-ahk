@@ -18,3 +18,13 @@ bot_settings.ini
 # OS
 Thumbs.db
 Desktop.ini
+
+$RECYCLE.BIN/
+
+# Python (if applicable during migration)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.snapshots
