@@ -1,2 +1,33 @@
-image
-.bot_settings.ini
+# AutoHotkey compiled scripts
+*.exe
+*.ahk.exe
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+
+# Configuration files (uncomment if you want to ignore local settings)
+bot_settings.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Python (if applicable during migration)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
